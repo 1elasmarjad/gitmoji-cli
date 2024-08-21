@@ -1,12 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	godotenv.Load()
 
 	// check all args
 	if len(os.Args) <= 1 {
@@ -52,7 +59,14 @@ func main() {
 			os.Exit(1)
 		}
 
-		newMsg := "🚀 " + *msg
+		emoji, err := GetEmoji(*msg)
+
+		if err != nil {
+			fmt.Println("Error getting emoji: ", err)
+			os.Exit(1)
+		}
+
+		newMsg := emoji + " " + *msg
 		msg = &newMsg
 
 		InputArgs[msgIdx] = `"` + *msg + `"`
@@ -67,4 +81,47 @@ func main() {
 		os.Exit(1)
 	}
 
+}
+
+func GetEmoji(commitMessage string) (string, error) {
+
+	postBody, err := json.Marshal(map[string]string{
+		"model": "gpt-4o-mini",
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	responseBody := bytes.NewBuffer(postBody)
+
+	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", responseBody)
+
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+os.Getenv("EMOJIS_OPENAI_API_KEY"))
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+
+	if err != nil {
+		return "", err
+	}
+
+	sbdy := string(body)
+
+	// TODO
+
+	return "🚀", nil
 }
