@@ -70,7 +70,7 @@ func main() {
 		newMsg := emoji + " " + *msg
 		msg = &newMsg
 
-		InputArgs[msgIdx] = `"` + *msg + `"`
+		InputArgs[msgIdx] = *msg
 
 		// remove first arg
 		InputArgs = InputArgs[1:]
