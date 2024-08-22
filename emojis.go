@@ -83,10 +83,31 @@ func main() {
 
 }
 
+type ChatGptResponse struct {
+	ID      string `json:"id"`
+	Choices []struct {
+		Index   int `json:"index"`
+		Message struct {
+			Role    string `json:"role"`
+			Content string `json:"content"`
+		}
+	} `json:"choices"`
+}
+
 func GetEmoji(commitMessage string) (string, error) {
 
-	postBody, err := json.Marshal(map[string]string{
+	postBody, err := json.Marshal(map[string]interface{}{
 		"model": "gpt-4o-mini",
+		"messages": []map[string]string{
+			{
+				"role":    "system",
+				"content": "The user will give you a git-commit message, and you will provide an emoji to prepend to the message to make it more fun! Only send one emoji as the response, and make sure it's appropriate for a commit message.",
+			},
+			{
+				"role":    "user",
+				"content": commitMessage,
+			},
+		},
 	})
 
 	if err != nil {
@@ -119,10 +140,18 @@ func GetEmoji(commitMessage string) (string, error) {
 		return "", err
 	}
 
-	sbdy := string(body)
+	var chatGptResponse ChatGptResponse
 
-	// TODO
-	fmt.Println(sbdy)
+	err = json.Unmarshal(body, &chatGptResponse)
 
-	return "🚀", nil
+	if err != nil {
+		return "", err
+	}
+
+	if (len(chatGptResponse.Choices) == 0) || (len(chatGptResponse.Choices[0].Message.Content) == 0) {
+		return "", fmt.Errorf("no emoji returned")
+	}
+
+	// return the emoji
+	return chatGptResponse.Choices[0].Message.Content, nil
 }
