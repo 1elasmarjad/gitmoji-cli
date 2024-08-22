@@ -18,7 +18,7 @@ func main() {
 
 	// check all args
 	if len(os.Args) <= 1 {
-		fmt.Print("Usage: emojis <cmd>")
+		fmt.Print("Usage: gitmoji <cmd>")
 		os.Exit(1)
 	}
 
@@ -38,13 +38,13 @@ func main() {
 		}
 
 		if targetIdx == -1 {
-			fmt.Print("Usage: emojis commit -m <msg> (ERR1)")
+			fmt.Print("Usage: gitmoji commit -m <msg> (ERR1)")
 			os.Exit(1)
 		}
 
 		// does something exist after?
 		if len(os.Args) <= targetIdx+1 {
-			fmt.Print("Usage: emojis commit -m <msg> (ERR2)")
+			fmt.Print("Usage: gitmoji commit -m <msg> (ERR2)")
 			os.Exit(1)
 		}
 
@@ -56,7 +56,7 @@ func main() {
 		var msg *string = &InputArgs[msgIdx]
 
 		if strings.HasPrefix(*msg, "-") {
-			fmt.Print("Usage: emojis commit -m <msg> (ERR3)")
+			fmt.Print("Usage: gitmoji commit -m <msg> (ERR3)")
 			os.Exit(1)
 		}
 
@@ -86,7 +86,14 @@ func main() {
 
 		fmt.Println("Running git command: ", cmd.String())
 		fmt.Print(string(output))
+		os.Exit(0)
 
+	case "help":
+		fmt.Print("Usage: gitmoji <cmd>\n\n")
+		fmt.Print("Commands:\n")
+		fmt.Print("  commit -m <msg>  -  Add an emoji to a git commit message\n")
+		fmt.Print("  help             -  Show this help message\n\n")
+		os.Exit(0)
 	default:
 		fmt.Print("Invalid command")
 		os.Exit(1)
