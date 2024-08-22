@@ -122,6 +122,7 @@ func GetEmoji(commitMessage string) (string, error) {
 	sbdy := string(body)
 
 	// TODO
+	fmt.Println(sbdy)
 
 	return "🚀", nil
 }
