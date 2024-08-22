@@ -18,7 +18,7 @@ func main() {
 
 	// check all args
 	if len(os.Args) <= 1 {
-		fmt.Println("Usage: emojis <cmd>")
+		fmt.Print("Usage: emojis <cmd>")
 		os.Exit(1)
 	}
 
@@ -38,13 +38,13 @@ func main() {
 		}
 
 		if targetIdx == -1 {
-			fmt.Println("Usage: emojis commit -m <msg> (ERR1)")
+			fmt.Print("Usage: emojis commit -m <msg> (ERR1)")
 			os.Exit(1)
 		}
 
 		// does something exist after?
 		if len(os.Args) <= targetIdx+1 {
-			fmt.Println("Usage: emojis commit -m <msg> (ERR2)")
+			fmt.Print("Usage: emojis commit -m <msg> (ERR2)")
 			os.Exit(1)
 		}
 
@@ -56,14 +56,14 @@ func main() {
 		var msg *string = &InputArgs[msgIdx]
 
 		if strings.HasPrefix(*msg, "-") {
-			fmt.Println("Usage: emojis commit -m <msg> (ERR3)")
+			fmt.Print("Usage: emojis commit -m <msg> (ERR3)")
 			os.Exit(1)
 		}
 
 		emoji, err := GetEmoji(*msg)
 
 		if err != nil {
-			fmt.Println("Error getting emoji: ", err)
+			fmt.Print("Error getting emoji: ", err)
 			os.Exit(1)
 		}
 
@@ -80,7 +80,7 @@ func main() {
 		output, err := cmd.Output()
 
 		if err != nil {
-			fmt.Println("Error running git command:", err)
+			fmt.Print("Error running git command:", err)
 			os.Exit(1)
 		}
 
@@ -88,7 +88,7 @@ func main() {
 		fmt.Print(string(output))
 
 	default:
-		fmt.Println("Invalid command")
+		fmt.Print("Invalid command")
 		os.Exit(1)
 	}
 
