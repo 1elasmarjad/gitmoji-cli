@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/joho/godotenv"
@@ -74,7 +75,18 @@ func main() {
 		// remove first arg
 		InputArgs = InputArgs[1:]
 
-		fmt.Println("git", strings.Join(InputArgs, " "))
+		cmd := exec.Command("git", InputArgs...)
+
+		fmt.Printf(cmd.String() + "\n")
+
+		output, err := cmd.Output()
+
+		if err != nil {
+			fmt.Println("Error running git command: ", err)
+			os.Exit(1)
+		}
+
+		fmt.Print(string(output))
 
 	default:
 		fmt.Println("Invalid command")
