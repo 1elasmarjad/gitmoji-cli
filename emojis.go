@@ -77,15 +77,14 @@ func main() {
 
 		cmd := exec.Command("git", InputArgs...)
 
-		fmt.Printf(cmd.String() + "\n")
-
 		output, err := cmd.Output()
 
 		if err != nil {
-			fmt.Println("Error running git command: ", err)
+			fmt.Println("Error running git command:", err)
 			os.Exit(1)
 		}
 
+		fmt.Println("Running git command: ", cmd.String())
 		fmt.Print(string(output))
 
 	default:
